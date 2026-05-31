@@ -1,0 +1,17 @@
+{
+  "accountAssociation": {
+    "header": "",
+    "payload": "",
+    "signature": ""
+  },
+  "frame": {
+    "version": "1",
+    "name": "Farcaster Poll",
+    "iconUrl": "https://farcaster-poll-xi.vercel.app/globe.svg",
+    "homeUrl": "https://farcaster-poll-xi.vercel.app",
+    "imageUrl": "https://farcaster-poll-xi.vercel.app/globe.svg",
+    "buttonTitle": "Open Poll",
+    "splashImageUrl": "https://farcaster-poll-xi.vercel.app/globe.svg",
+    "splashBackgroundColor": "#0f0f0f"
+  }
+}
