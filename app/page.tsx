@@ -5,6 +5,16 @@ export default function Home() {
   const [question, setQuestion] = useState("");
   const [options, setOptions] = useState(["", ""]);
   const [view, setView] = useState<"home" | "create">("home");
+  const [wallet, setWallet] = useState<string | null>(null);
+
+  const connectWallet = async () => {
+    if (typeof window !== "undefined" && (window as any).ethereum) {
+      const accounts = await (window as any).ethereum.request({ method: "eth_requestAccounts" });
+      setWallet(accounts[0]);
+    } else {
+      alert("Please install MetaMask!");
+    }
+  };
 
   const addOption = () => {
     if (options.length < 4) setOptions([...options, ""]);
@@ -19,7 +29,22 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-gray-950 text-white flex flex-col items-center p-4 pt-12">
       <h1 className="text-3xl font-bold mb-1">🗳️ Farcaster Poll</h1>
-      <p className="text-gray-400 mb-8">On-chain polls, share on Farcaster</p>
+      <p className="text-gray-400 mb-4">On-chain polls, share on Farcaster</p>
+
+      <div className="mb-8">
+        {wallet ? (
+          <div className="bg-gray-800 px-4 py-2 rounded-xl text-sm text-green-400">
+            ✅ {wallet.slice(0, 6)}...{wallet.slice(-4)}
+          </div>
+        ) : (
+          <button
+            onClick={connectWallet}
+            className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-xl"
+          >
+            Connect Wallet
+          </button>
+        )}
+      </div>
 
       {view === "home" && (
         <div className="w-full max-w-md">
