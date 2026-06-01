@@ -1,17 +1,7 @@
 {
   "accountAssociation": {
-    "header": "",
-    "payload": "",
-    "signature": ""
-  },
-  "frame": {
-    "version": "1",
-    "name": "Farcaster Poll",
-    "iconUrl": "https://farcaster-poll-xi.vercel.app/globe.svg",
-    "homeUrl": "https://farcaster-poll-xi.vercel.app",
-    "imageUrl": "https://farcaster-poll-xi.vercel.app/globe.svg",
-    "buttonTitle": "Open Poll",
-    "splashImageUrl": "https://farcaster-poll-xi.vercel.app/globe.svg",
-    "splashBackgroundColor": "#0f0f0f"
+    "header": "eyJmaWQiOjEwNzQzODMsInR5cGUiOiJjdXN0b2R5Iiwia2V5IjoiMHgyN2IzMjJCZTM2NTliOTJDMjZCNWU0Mjk0YTE0NjY5MTJCZmQ2ZTk4In0",
+    "payload": "eyJkb21haW4iOiJmYXJjYXN0ZXItcG9sbC14aS52ZXJjZWwuYXBwIn0",
+    "signature": "i19d8/Mex+2icYHuoOno4ETr9gf06knFsTcmn2bkj041VUWIeg2tAUl1zA7igmW1WetN8Wo05ziTq/wDGJfYXhs="
   }
 }
