@@ -121,6 +121,10 @@ export default function Home() {
     }
   };
 
+  const disconnectWallet = () => {
+    setWallet(null);
+  };
+
   const publishPoll = async () => {
     if (!wallet) { alert("Connect wallet first!"); return; }
     if (!question || options.filter(o => o).length < 2) { alert("Fill question and at least 2 options!"); return; }
@@ -162,8 +166,13 @@ export default function Home() {
 
       <div className="mb-6">
         {wallet ? (
-          <div className="bg-gray-800 px-4 py-2 rounded-xl text-sm text-green-400">
-            ✅ {wallet.slice(0, 6)}...{wallet.slice(-4)}
+          <div className="flex items-center gap-2">
+            <div className="bg-gray-800 px-4 py-2 rounded-xl text-sm text-green-400">
+              ✅ {wallet.slice(0, 6)}...{wallet.slice(-4)}
+            </div>
+            <button onClick={disconnectWallet} className="bg-gray-700 hover:bg-gray-600 text-white text-sm py-2 px-3 rounded-xl">
+              Disconnect
+            </button>
           </div>
         ) : (
           <button onClick={connectWallet} className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-xl">
