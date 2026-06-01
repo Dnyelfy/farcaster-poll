@@ -2,6 +2,9 @@
 import { useState, useEffect } from "react";
 
 const CONTRACT_ADDRESS = "0xb496Ee4aEF089eb519bEB77Ce4440caF50Cec651";
+const BUILDER_NAME = "Dnyelfy";
+const BUILDER_FARCASTER = "donay";
+const BUILDER_X = "Dnyelfy";
 
 const CONTRACT_ABI = [
   {
@@ -131,7 +134,11 @@ export default function Home() {
       const tx = await contract.createPoll(question, options.filter(o => o));
       await tx.wait();
       setLastTxHash(tx.hash);
-      alert("Poll published on Base! 🎉");
+      
+      const shareText = `🗳️ Just created a new poll on Farcaster Poll!\n\n"${question}"\n\nVote on-chain on Base 🔵\nhttps://farcaster-poll-xi.vercel.app\n\nBuilt by @${BUILDER_FARCASTER}`;
+      const choice = window.confirm("Poll published! 🎉\n\nShare on Warpcast?");
+      if (choice) window.open(`https://warpcast.com/~/compose?text=${encodeURIComponent(shareText)}`, "_blank");
+      
       setView("home");
       setQuestion("");
       setOptions(["", ""]);
@@ -149,13 +156,9 @@ export default function Home() {
       await tx.wait();
       setLastTxHash(tx.hash);
       
-      const shareText = `I just voted "${optionText}" on "${pollQuestion}" 🗳️\n\nVote on Farcaster Poll — on-chain polls on Base!\n\nhttps://farcaster-poll-xi.vercel.app`;
-      const warpcastUrl = `https://warpcast.com/~/compose?text=${encodeURIComponent(shareText)}`;
-      const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}`;
-      const basescanUrl = `https://basescan.org/tx/${tx.hash}`;
-
-      const choice = window.confirm("Vote submitted! 🎉\n\nShare your vote?\n\nOK = Warpcast | Cancel = Skip");
-      if (choice) window.open(warpcastUrl, "_blank");
+      const shareText = `🗳️ I just voted "${optionText}" on:\n\n"${pollQuestion}"\n\nVote on-chain on Base 🔵\nhttps://farcaster-poll-xi.vercel.app\n\nBuilt by @${BUILDER_FARCASTER}`;
+      const choice = window.confirm("Vote submitted! 🎉\n\nShare on Warpcast?");
+      if (choice) window.open(`https://warpcast.com/~/compose?text=${encodeURIComponent(shareText)}`, "_blank");
       
       loadPolls();
     } catch (e: any) { alert("Error: " + e.message); }
@@ -168,13 +171,18 @@ export default function Home() {
       const pct = total > 0 ? Math.round((poll.votes[i] / total) * 100) : 0;
       return `${opt}: ${pct}%`;
     }).join(" | ");
-    const text = `📊 "${poll.question}"\n${results}\n\nVote on-chain on Base!\nhttps://farcaster-poll-xi.vercel.app`;
+    const text = `📊 "${poll.question}"\n${results}\n\nVote on-chain on Base 🔵\nhttps://farcaster-poll-xi.vercel.app\n\nBuilt by @${BUILDER_X}`;
     window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`, "_blank");
   };
 
   const shareOnWarpcast = (poll: Poll) => {
-    const text = `🗳️ "${poll.question}"\n\nVote on-chain on Base!\nhttps://farcaster-poll-xi.vercel.app`;
+    const text = `🗳️ "${poll.question}"\n\nVote on-chain on Base 🔵\nhttps://farcaster-poll-xi.vercel.app\n\nBuilt by @${BUILDER_FARCASTER}`;
     window.open(`https://warpcast.com/~/compose?text=${encodeURIComponent(text)}`, "_blank");
+  };
+
+  const shareOnBaseApp = (poll: Poll) => {
+    const text = `🗳️ "${poll.question}"\n\nVote on-chain on Base 🔵\nhttps://farcaster-poll-xi.vercel.app\n\nBuilt by @${BUILDER_FARCASTER}`;
+    window.open(`https://www.base.org/share?text=${encodeURIComponent(text)}`, "_blank");
   };
 
   const myPolls = polls.filter(p => wallet && p.creator.toLowerCase() === wallet.toLowerCase());
@@ -186,7 +194,19 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-gray-950 text-white flex flex-col items-center p-4 pt-8">
       <h1 className="text-3xl font-bold mb-1">🗳️ Farcaster Poll</h1>
-      <p className="text-gray-400 mb-4">On-chain polls on Base</p>
+      <p className="text-gray-400 mb-1">On-chain polls on Base</p>
+      <div className="flex gap-3 mb-4 text-xs text-gray-500">
+        <span>Built by</span>
+        <a href={`https://warpcast.com/${BUILDER_FARCASTER}`} target="_blank" className="text-purple-400 hover:underline">
+          🟣 @{BUILDER_FARCASTER}
+        </a>
+        <a href={`https://x.com/${BUILDER_X}`} target="_blank" className="text-blue-400 hover:underline">
+          𝕏 @{BUILDER_X}
+        </a>
+        <a href={`https://basescan.org/address/${CONTRACT_ADDRESS}`} target="_blank" className="text-green-400 hover:underline">
+          🔵 Contract
+        </a>
+      </div>
 
       <div className="mb-4 flex items-center gap-2">
         {wallet ? (
@@ -208,7 +228,6 @@ export default function Home() {
         )}
       </div>
 
-      {/* Nav */}
       <div className="flex gap-2 mb-6">
         <button onClick={() => setView("home")} className={`px-4 py-2 rounded-xl text-sm font-bold ${view === "home" ? "bg-purple-600" : "bg-gray-800"}`}>
           All Polls
@@ -223,7 +242,6 @@ export default function Home() {
         </button>
       </div>
 
-      {/* Poll List */}
       {(view === "home" || view === "profile") && (
         <div className="w-full max-w-md">
           {loading && <p className="text-center text-gray-400">Loading polls...</p>}
@@ -247,16 +265,10 @@ export default function Home() {
                 <div className="flex items-center justify-between mt-2">
                   <p className="text-gray-500 text-sm">{total} votes • {poll.creator.slice(0, 6)}...{poll.creator.slice(-4)}</p>
                   <div className="flex gap-2">
-                    <button onClick={() => shareOnWarpcast(poll)} className="text-purple-400 text-xs hover:text-purple-300">
-                      🟣 Cast
-                    </button>
-                    <button onClick={() => shareOnX(poll)} className="text-blue-400 text-xs hover:text-blue-300">
-                      𝕏 Share
-                    </button>
-                    <a href={`https://basescan.org/address/${CONTRACT_ADDRESS}`} target="_blank"
-                      className="text-green-400 text-xs hover:text-green-300">
-                      🔍 Base
-                    </a>
+                    <button onClick={() => shareOnWarpcast(poll)} className="text-purple-400 text-xs hover:text-purple-300">🟣 Cast</button>
+                    <button onClick={() => shareOnX(poll)} className="text-blue-400 text-xs hover:text-blue-300">𝕏 Share</button>
+                    <button onClick={() => shareOnBaseApp(poll)} className="text-blue-300 text-xs hover:text-blue-200">🔵 Base</button>
+                    <a href={`https://basescan.org/address/${CONTRACT_ADDRESS}`} target="_blank" className="text-green-400 text-xs hover:text-green-300">🔍 Scan</a>
                   </div>
                 </div>
               </div>
@@ -271,7 +283,6 @@ export default function Home() {
         </div>
       )}
 
-      {/* Create Poll */}
       {view === "create" && (
         <div className="w-full max-w-md bg-gray-900 rounded-xl p-6">
           <h2 className="text-xl font-bold mb-4">New Poll</h2>
@@ -289,13 +300,21 @@ export default function Home() {
             {publishing ? "Publishing..." : "Publish on Base 🚀"}
           </button>
           {lastTxHash && (
-            <a href={`https://basescan.org/tx/${lastTxHash}`} target="_blank"
-              className="text-green-400 text-sm mt-3 block text-center">
-              🔍 View last tx on Basescan ↗
+            <a href={`https://basescan.org/tx/${lastTxHash}`} target="_blank" className="text-green-400 text-sm mt-3 block text-center">
+              🔍 View on Basescan ↗
             </a>
           )}
         </div>
       )}
+
+      <footer className="mt-8 text-center text-gray-600 text-xs">
+        <p>Built by <a href={`https://warpcast.com/${BUILDER_FARCASTER}`} target="_blank" className="text-purple-400">@{BUILDER_FARCASTER}</a> on Base 🔵</p>
+        <p className="mt-1">
+          <a href={`https://x.com/${BUILDER_X}`} target="_blank" className="text-blue-400 mr-2">𝕏 Twitter</a>
+          <a href={`https://warpcast.com/${BUILDER_FARCASTER}`} target="_blank" className="text-purple-400 mr-2">🟣 Farcaster</a>
+          <a href={`https://basescan.org/address/${CONTRACT_ADDRESS}`} target="_blank" className="text-green-400">🔍 Contract</a>
+        </p>
+      </footer>
     </main>
   );
 }
